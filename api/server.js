@@ -37,13 +37,16 @@ server.get("/api/users/:id", (req, res) => {
 });
 
 server.post("/api/users", async (req, res) => {
-  if (!user.name || !user.bio) {
+  //   const { name, bio } = req.body;
+  if (!req.body.name || !req.body.bio) {
     res
       .status(400)
       .json({ message: "Please provide name and bio for the user." });
+    // console.log(name);
+    // console.log(bio);
   } else {
     try {
-      const newlyCreated = await User.create(user);
+      const newlyCreated = await User.create(req.body);
       res.status(201).json(newlyCreated);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -52,7 +55,7 @@ server.post("/api/users", async (req, res) => {
 });
 
 server.put("/api/users/:id", async (req, res) => {
-  const id = re.params.id;
+  const id = req.params.id;
   const changes = req.body;
 
   if (!changes.name || !changes.bio || changes.adopter_id === undefined) {
@@ -73,9 +76,9 @@ server.put("/api/users/:id", async (req, res) => {
   }
 });
 
-server.delete("api/users/:id", (req, res) => {
-  const { id } = req.params;
-  User.delete(id)
+server.delete("/api/users/:id", (req, res) => {
+  //   const { id } = req.params;
+  User.delete(req.params.id)
     .then((deleted) => {
       if (!deleted) {
         res.status(404).json({ message: `dog with id ${id} not found` });
